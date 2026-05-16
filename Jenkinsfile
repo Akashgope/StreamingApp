@@ -19,11 +19,16 @@ pipeline {
                     sh "docker tag streamingapp-frontend:latest ${ECR_REGISTRY}/streamingapp-frontend:latest"
                     sh "docker push ${ECR_REGISTRY}/streamingapp-frontend:latest"
                     
-                    def services = ['authService', 'streamingService', 'adminService', 'chatService']
+                    def services = [
+                        [name: 'authService', repo: 'auth'],
+                        [name: 'streamingService', repo: 'streaming'],
+                        [name: 'adminService', repo: 'admin'],
+                        [name: 'chatService', repo: 'chat']
+                    ]
                     for (service in services) {
-                        sh "docker build -t streamingapp-${service} -f backend/Dockerfile ./backend --build-arg SERVICE_NAME=${service}"
-                        sh "docker tag streamingapp-${service}:latest ${ECR_REGISTRY}/streamingapp-backend-${service}:latest"
-                        sh "docker push ${ECR_REGISTRY}/streamingapp-backend-${service}:latest"
+                        sh "docker build -t streamingapp-${service.repo} -f backend/Dockerfile ./backend --build-arg SERVICE_NAME=${service.name}"
+                        sh "docker tag streamingapp-${service.repo}:latest ${ECR_REGISTRY}/streamingapp-backend-${service.repo}:latest"
+                        sh "docker push ${ECR_REGISTRY}/streamingapp-backend-${service.repo}:latest"
                     }
                 }
             }
