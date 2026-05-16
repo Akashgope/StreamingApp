@@ -7,6 +7,8 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=builder /app/build /usr/share/nginx/html
+ENV NODE_OPTIONS="--max-old-space-size=512"
+
 EXPOSE 3000
 CMD ["nginx", "-g", "daemon off;"]
 
